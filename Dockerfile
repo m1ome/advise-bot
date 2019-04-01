@@ -6,6 +6,12 @@ WORKDIR /go/src/github.com/m1ome/advise-bot
 
 RUN apk add --no-cache git gcc musl-dev
 
+RUN \
+    export VERSION=$(git rev-parse --verify HEAD) && \
+    export LDFLAGS="-w -s -X main.Version=${VERSION}" && \
+    export CGO_ENABLED=0 && \
+    go build -v -ldflags "${LDFLAGS}" -o /go/bin/bot .
+
 # Packing in main container
 FROM alpine:3.8
 
