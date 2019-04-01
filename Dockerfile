@@ -5,6 +5,8 @@ COPY . /go/src/github.com/m1ome/advise-bot
 WORKDIR /go/src/github.com/m1ome/advise-bot
 
 RUN apk add --no-cache git gcc musl-dev
+RUN go get -u github.com/golang/dep/...
+RUN dep ensure
 
 RUN \
     export VERSION=$(git rev-parse --verify HEAD) && \
