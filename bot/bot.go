@@ -61,7 +61,6 @@ func (b *Bot) Start() {
 			logrus.Errorf("error sending message: %v", err)
 		}
 	})
-
 	b.bot.Start()
 }
 
