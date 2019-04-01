@@ -50,7 +50,7 @@ func (b *Bot) Start() {
 		advise, err := b.client.Random()
 		if err != nil {
 			logrus.Errorf("error fetching advise: %v", err)
-			if _, err := b.bot.Send(rec, "error getting advise: %s", err.Error()); err != nil {
+			if _, err := b.bot.Send(rec, fmt.Sprintf("error getting advise: %s", err.Error())); err != nil {
 				logrus.Errorf("error sending failure message: %v", err)
 			}
 
