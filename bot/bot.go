@@ -70,6 +70,30 @@ func (b *Bot) Info() string {
 }
 
 func (b *Bot) Start() {
+	b.bot.Handle(telebot.OnText, func(message *telebot.Message) {
+		if message.Private() {
+			return
+		}
+
+		if !strings.Contains(message.Text, "совет") {
+			return
+		}
+
+		advise, err := b.client.Random()
+		if err != nil {
+			logrus.Errorf("error fetching advise: %v", err)
+			if _, err := b.bot.Send(message.Chat, fmt.Sprintf("error getting advise: %s", err.Error())); err != nil {
+				logrus.Errorf("error sending failure message: %v", err)
+			}
+
+			return
+		}
+
+		if _, err := b.bot.Send(message.Chat, "@"+message.Sender.Username+" "+advise); err != nil {
+			logrus.Errorf("error sending message: %v", err)
+		}
+	})
+
 	// Handle command
 	b.bot.Handle("/advise", func(message *telebot.Message) {
 		// Getting recipient
