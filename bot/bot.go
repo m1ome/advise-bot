@@ -6,8 +6,7 @@ import (
 
 	"github.com/m1ome/advise-bot/lib/fga"
 	"github.com/sirupsen/logrus"
-
-	"gopkg.in/tucnak/telebot.v2"
+	"github.com/tucnak/telebot"
 )
 
 type (

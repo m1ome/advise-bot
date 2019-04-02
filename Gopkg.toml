@@ -35,7 +35,7 @@
 
 [[constraint]]
   branch = "v2"
-  name = "gopkg.in/tucnak/telebot.v2"
+  name = "github.com/tucnak/telebot"
 
 [prune]
   go-tests = true

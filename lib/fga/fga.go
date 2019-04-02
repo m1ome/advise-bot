@@ -40,17 +40,17 @@ func (c Client) Random() (string, error) {
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-
 	if res.StatusCode != http.StatusOK {
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return "", err
+		}
+
 		return "", fmt.Errorf("error getting advise [%d]: %s", res.StatusCode, string(body))
 	}
 
 	var a advise
-	if err := json.Unmarshal(body, &a); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&a); err != nil {
 		return "", err
 	}
 

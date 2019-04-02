@@ -50,6 +50,14 @@
   version = "v1.3.0"
 
 [[projects]]
+  branch = "v2"
+  digest = "1:2f3a06f7eb7cf1998d11c666078573e041b184672c9b0a7d39f4dc459564e718"
+  name = "github.com/tucnak/telebot"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9b714b274c8ae17be0de977f309a27b178e3cd2c"
+
+[[projects]]
   branch = "master"
   digest = "1:bbe51412d9915d64ffaa96b51d409e070665efc5194fcf145c4a27d4133107a4"
   name = "golang.org/x/crypto"
@@ -59,22 +67,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f6321364014431568a59b49b449d6ae60c017f3afa3f4ab787a5636853b16b1e"
+  digest = "1:641f7202c4626fb19f68ecbbbd493df0bfe2e38f97ecb4d5d3b16536ff0f84eb"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "9eb1bfa1ce65ae8a6ff3114b0aaf9a41a6cf3560"
-
-[[projects]]
-  branch = "v2"
-  digest = "1:2f3a06f7eb7cf1998d11c666078573e041b184672c9b0a7d39f4dc459564e718"
-  name = "gopkg.in/tucnak/telebot.v2"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "9b714b274c8ae17be0de977f309a27b178e3cd2c"
+  revision = "e4093980e83e70784fc393a93d5620e2654097f0"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -82,7 +82,7 @@
   input-imports = [
     "github.com/sirupsen/logrus",
     "github.com/stretchr/testify/assert",
-    "gopkg.in/tucnak/telebot.v2",
+    "github.com/tucnak/telebot",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
