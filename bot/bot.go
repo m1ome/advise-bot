@@ -75,7 +75,8 @@ func (b *Bot) Start() {
 			return
 		}
 
-		if !strings.Contains(message.Text, "совет") {
+		text := strings.ToLower(message.Text)
+		if !strings.Contains(text, "совет") {
 			return
 		}
 
