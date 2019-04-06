@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/m1ome/advise-bot/lib/fga"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/tucnak/telebot"
 )
@@ -48,7 +49,7 @@ func New(token string, verbose bool) (*Bot, error) {
 			Timeout: time.Second * 10,
 		},
 		Reporter: func(err error) {
-			if strings.Contains(err.Error(), telebot.ErrCouldNotUpdate.Error()) && verbose {
+			if errors.Cause(err) == telebot.ErrCouldNotUpdate && verbose {
 				logrus.Infof("cannot fetch updates from telegram: %v", err)
 			} else {
 				logrus.Errorf("error from telegram: %v", err)
