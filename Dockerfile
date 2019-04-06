@@ -1,12 +1,10 @@
 # Building application
-FROM golang:1.10-alpine3.8 as builder
+FROM golang:1.12-alpine3.9 as builder
 
-COPY . /go/src/github.com/m1ome/advise-bot
-WORKDIR /go/src/github.com/m1ome/advise-bot
+COPY . /src/bot
+WORKDIR /src/bot
 
-RUN apk add --no-cache git gcc musl-dev
-RUN go get -u github.com/golang/dep/...
-RUN dep ensure
+RUN apk add git
 
 RUN \
     export VERSION=$(git rev-parse --verify HEAD) && \
@@ -15,9 +13,9 @@ RUN \
     go build -v -ldflags "${LDFLAGS}" -o /go/bin/bot .
 
 # Packing in main container
-FROM alpine:3.8
+FROM alpine:3.9
 
-RUN apk add --no-cache ca-certificates
+RUN apk add ca-certificates
 
 WORKDIR /
 

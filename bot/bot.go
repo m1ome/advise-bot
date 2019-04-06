@@ -2,6 +2,8 @@ package bot
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/m1ome/advise-bot/lib/fga"
@@ -16,11 +18,41 @@ type (
 	}
 )
 
-func New(token string) (*Bot, error) {
+func New(token string, verbose bool) (*Bot, error) {
+	longPoller := &telebot.LongPoller{
+		Timeout: time.Second * 10,
+	}
+
+	var poller telebot.Poller
+	if verbose {
+		poller = telebot.NewMiddlewarePoller(longPoller, func(update *telebot.Update) bool {
+			text := ""
+			if update.Message != nil {
+				text = update.Message.Text
+			}
+
+			logrus.WithFields(logrus.Fields{
+				"update_id":   update.ID,
+				"update_text": text,
+			}).Info("incoming telegram update")
+			return true
+		})
+	} else {
+		poller = longPoller
+	}
+
 	bot, err := telebot.NewBot(telebot.Settings{
-		Token: token,
-		Poller: &telebot.LongPoller{
+		Token:  token,
+		Poller: poller,
+		Client: &http.Client{
 			Timeout: time.Second * 10,
+		},
+		Reporter: func(err error) {
+			if strings.Contains(err.Error(), telebot.ErrCouldNotUpdate.Error()) && verbose {
+				logrus.Infof("cannot fetch updates from telegram: %v", err)
+			} else {
+				logrus.Errorf("error from telegram: %v", err)
+			}
 		},
 	})
 	if err != nil {
@@ -38,6 +70,31 @@ func (b *Bot) Info() string {
 }
 
 func (b *Bot) Start() {
+	b.bot.Handle(telebot.OnText, func(message *telebot.Message) {
+		if message.Private() {
+			return
+		}
+
+		text := strings.ToLower(message.Text)
+		if !strings.Contains(text, "совет") {
+			return
+		}
+
+		advise, err := b.client.Random()
+		if err != nil {
+			logrus.Errorf("error fetching advise: %v", err)
+			if _, err := b.bot.Send(message.Chat, fmt.Sprintf("error getting advise: %s", err.Error())); err != nil {
+				logrus.Errorf("error sending failure message: %v", err)
+			}
+
+			return
+		}
+
+		if _, err := b.bot.Send(message.Chat, "@"+message.Sender.Username+" "+advise); err != nil {
+			logrus.Errorf("error sending message: %v", err)
+		}
+	})
+
 	// Handle command
 	b.bot.Handle("/advise", func(message *telebot.Message) {
 		// Getting recipient

@@ -11,25 +11,29 @@ import (
 )
 
 var (
-	token string
+	token   string
+	verbose bool
+
+	Version = "dev"
 )
 
 func init() {
 	flag.StringVar(&token, "token", "", "telegram bot token")
+	flag.BoolVar(&verbose, "v", false, "verbose mode")
 	flag.Parse()
 }
 
 func main() {
-	logrus.Info("intializing bot application")
-	b, err := bot.New(token)
+	logrus.Infof("init bot application: %s", Version)
+	b, err := bot.New(token, verbose)
 	if err != nil {
 		logrus.Fatalf("error connecting to bot: %v", err)
 	}
 
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
-		<-sigs
+		<-signals
 		logrus.Info("shutting down bot")
 		b.Stop()
 	}()
